@@ -46,6 +46,31 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
     ellipse(42, -70, 22);
     fill(black);
     ellipse(44, -72, 10);
+    fill(blueR2D2);
+    rect(60, -85, 12, 27);
+    rect(75, -85, 12, 27);
+
+    beginShape();
+    vertex(-57, -130);
+    vertex(-20, -130);
+    vertex(-17, -145);
+    vertex(-28, -145);
+    bezierVertex(-34, -145, -57, -135, -57, -130);
+    endShape();
+    beginShape();
+    vertex(18, -130);
+    vertex(-11, -130);
+    vertex(-8, -145);
+    vertex(15, -145);
+    vertex(18, -130);
+    endShape();
+    beginShape();
+    vertex(57, -130);
+    vertex(25, -130);
+    vertex(23, -145);
+    vertex(30, -145);
+    bezierVertex(34, -145, 57, -135, 57, -130);
+    endShape();
   }
 
   function r2Body() {
@@ -166,17 +191,40 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
 
     //The rockets
     fill(lightGrayR2D2);
+
     beginShape();
-    vertex(145 * turn, 0);
+    vertex(140 * turn, 0);
+    vertex(160 * turn, 5);
+    vertex(160 * turn, 15);
+    vertex(140 * turn, 10);
+    endShape();
+
+    beginShape();
+    vertex(140 * turn, 50);
+    vertex(160 * turn, 45);
+    vertex(160 * turn, 35);
+    vertex(140 * turn, 40);
+    endShape();
+
+    beginShape();
+    vertex(145 * turn, -10);
     vertex(145 * turn, 50);
     bezierVertex(145 * turn, 40, 145 * turn, 55, 150 * turn, 55);
     vertex(145 * turn, 70);
     vertex(165 * turn, 70);
     vertex(160 * turn, 55);
     bezierVertex(165 * turn, 55, 165 * turn, 40, 165 * turn, 50);
-    vertex(165 * turn, 0);
-    vertex(145 * turn, 0);
+    vertex(165 * turn, -10);
     endShape();
+
+    beginShape();
+    vertex(140 * turn, 20);
+    vertex(160 * turn, 20);
+    vertex(160 * turn, 30);
+    vertex(140 * turn, 30);
+    endShape();
+
+    ellipse(150 * turn, 25, 5);
 
     pop();
   }
@@ -195,24 +243,24 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
 }
 
 xR2D2 = 400;
-yR2D2 = 0;
+yR2D2 = 200;
 gravity = 0;
 velocity = 0;
 function draw() {
   background(black);
-  r2d2(xR2D2, yR2D2, 0.5, 0);
+  r2d2(xR2D2, yR2D2, 1, 0);
 
-  for (let i = 0; i < 1; i++) {
-    if (keyIsDown(32) && yR2D2 < 600) {
-      velocity = velocity - 0.1;
-      yR2D2 = yR2D2 + velocity;
-      yR2D2 = yR2D2 + gravity;
-      gravity = gravity - 0.01;
-    } else if (yR2D2 < 600) {
-      gravity = gravity + 0.01;
-      yR2D2 = yR2D2 + gravity;
-      yR2D2 = yR2D2 + velocity;
-      velocity = velocity + 0.1;
-    }
-  }
+  // for (let i = 0; i < 1; i++) {
+  //   if (keyIsDown(32) && yR2D2 < 600) {
+  //     velocity = velocity - 0.1;
+  //     yR2D2 = yR2D2 + velocity;
+  //     yR2D2 = yR2D2 + gravity;
+  //     gravity = gravity - 0.01;
+  //   } else if (yR2D2 < 600) {
+  //     gravity = gravity + 0.01;
+  //     yR2D2 = yR2D2 + gravity;
+  //     yR2D2 = yR2D2 + velocity;
+  //     velocity = velocity + 0.1;
+  //   }
+  // }
 }
