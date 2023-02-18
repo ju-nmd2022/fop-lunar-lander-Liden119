@@ -195,21 +195,21 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
 }
 
 xR2D2 = 400;
-yR2D2 = 50;
+yR2D2 = 0;
 gravity = 0;
 velocity = 0;
 function draw() {
   background(black);
-  r2d2(xR2D2, yR2D2, 0.2, 0);
+  r2d2(xR2D2, yR2D2, 0.5, 0);
 
-  while (yR2D2 < 600) {
-    if (keyIsDown(32)) {
+  for (let i = 0; i < 1; i++) {
+    if (keyIsDown(32) && yR2D2 < 600) {
       velocity = velocity - 0.1;
       yR2D2 = yR2D2 + velocity;
       yR2D2 = yR2D2 + gravity;
-      gravity = gravity - 0.1;
-    } else {
-      gravity = gravity + 0.1;
+      gravity = gravity - 0.01;
+    } else if (yR2D2 < 600) {
+      gravity = gravity + 0.01;
       yR2D2 = yR2D2 + gravity;
       yR2D2 = yR2D2 + velocity;
       velocity = velocity + 0.1;
