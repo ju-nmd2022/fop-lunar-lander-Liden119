@@ -242,13 +242,17 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
   pop();
 }
 
+scaleR2D2 = 0.1;
 xR2D2 = 400;
 yR2D2 = 200;
-velocity = 0;
+yVelocity = 0;
+xVelocity = 0;
 rotation = 0;
+gravity = 0;
+speed = 0.05;
 function draw() {
   background(black);
-  r2d2(xR2D2, yR2D2, 0.2, rotation);
+  r2d2(xR2D2, yR2D2, scaleR2D2, rotation);
 
   for (let i = 0; i < 1; i++) {
     // x = x + Math.cos(rotation) * speed;
@@ -258,18 +262,45 @@ function draw() {
     //   xR2D2 = xR2D2 + Math.cos(rotation);
 
     if (keyIsDown(32) && yR2D2 < 600) {
-      velocity = velocity - 0.15;
-      yR2D2 = yR2D2 + velocity;
+      if (rotation > 0) {
+        yVelocity = yVelocity - speed * -Math.sin(rotation);
+      } else {
+        yVelocity = yVelocity - speed * Math.sin(rotation);
+      }
+
+      if (rotation > -1.1 && rotation < -0.01) {
+        xVelocity = xVelocity - (speed / 2) * Math.cos(rotation);
+      } else if (rotation < 1.1 && rotation > 0.01) {
+        xVelocity = xVelocity + (speed / 2) * Math.cos(rotation);
+      } else {
+        xVelocity = xVelocity * 0.5;
+      }
+
+      gravity = gravity - speed;
+      yR2D2 = yR2D2 + yVelocity + gravity;
+      xR2D2 = xR2D2 + xVelocity;
     } else if (yR2D2 < 600) {
-      velocity = velocity + 0.1;
-      yR2D2 = yR2D2 + velocity;
+      if (xVelocity < 0) {
+        xVelocity = xVelocity + speed;
+      } else if (xVelocity > 0) {
+        xVelocity = xVelocity - speed;
+      }
+
+      if (yVelocity < 0) {
+        yVelocity = yVelocity + speed;
+      }
+      gravity = gravity + speed / 1.2;
+      yR2D2 = yR2D2 + yVelocity + gravity;
+      xR2D2 = xR2D2 + xVelocity;
     }
 
-    //Rotation is taken from garrits car example
-    if (keyIsDown(65) && rotation > -0.8) {
-      rotation = rotation - 0.05;
-    } else if (keyIsDown(68) && rotation < 0.8) {
-      rotation = rotation + 0.05;
+    //Rotation is inspired from garrits car example from:
+    //https://pixelkind.github.io/foundationsofprogramming/programming/
+    // , with some changes
+    if (keyIsDown(65) && rotation > -1) {
+      rotation = rotation - speed / 2;
+    } else if (keyIsDown(68) && rotation < 1) {
+      rotation = rotation + speed / 2;
     }
   }
 }
