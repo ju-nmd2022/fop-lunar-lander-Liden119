@@ -244,23 +244,32 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
 
 xR2D2 = 400;
 yR2D2 = 200;
-gravity = 0;
 velocity = 0;
+rotation = 0;
 function draw() {
   background(black);
-  r2d2(xR2D2, yR2D2, 1, 0);
+  r2d2(xR2D2, yR2D2, 0.2, rotation);
 
-  // for (let i = 0; i < 1; i++) {
-  //   if (keyIsDown(32) && yR2D2 < 600) {
-  //     velocity = velocity - 0.1;
-  //     yR2D2 = yR2D2 + velocity;
-  //     yR2D2 = yR2D2 + gravity;
-  //     gravity = gravity - 0.01;
-  //   } else if (yR2D2 < 600) {
-  //     gravity = gravity + 0.01;
-  //     yR2D2 = yR2D2 + gravity;
-  //     yR2D2 = yR2D2 + velocity;
-  //     velocity = velocity + 0.1;
-  //   }
-  // }
+  for (let i = 0; i < 1; i++) {
+    // x = x + Math.cos(rotation) * speed;
+    // y = y + Math.sin(rotation) * speed;
+
+    // yR2D2 = yR2D2 + Math.sin(rotation) + velocity;
+    //   xR2D2 = xR2D2 + Math.cos(rotation);
+
+    if (keyIsDown(32) && yR2D2 < 600) {
+      velocity = velocity - 0.15;
+      yR2D2 = yR2D2 + velocity;
+    } else if (yR2D2 < 600) {
+      velocity = velocity + 0.1;
+      yR2D2 = yR2D2 + velocity;
+    }
+
+    //Rotation is taken from garrits car example
+    if (keyIsDown(65) && rotation > -0.8) {
+      rotation = rotation - 0.05;
+    } else if (keyIsDown(68) && rotation < 0.8) {
+      rotation = rotation + 0.05;
+    }
+  }
 }
