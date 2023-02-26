@@ -1,9 +1,13 @@
 //Colors
 let black = [0, 0, 0];
+let white = [255, 255, 255];
+let blueStart = [130, 180, 255];
 let whiteR2D2 = [245, 245, 255];
 let blueR2D2 = [40, 50, 135];
 let lightGrayR2D2 = [200, 200, 220];
+let grayTF = [112, 111, 120];
 
+//R2-D2
 function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
   push();
   stroke(1 * scaleR2D2);
@@ -242,65 +246,202 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
   pop();
 }
 
-scaleR2D2 = 0.1;
-xR2D2 = 400;
-yR2D2 = 200;
-yVelocity = 0;
-xVelocity = 0;
-rotation = 0;
-gravity = 0;
-speed = 0.05;
-function draw() {
+//tie fighter
+function tieFighter(xTF, yTF, scaleTF, rotationTF) {
+  push();
+  translate(xTF, yTF);
+  stroke(1 * scaleTF);
+  scale(scaleTF);
+  rotate(rotationTF);
+
+  function wingTF(wingTFx, wingTFy) {
+    push();
+    fill(black);
+    beginShape();
+    vertex(-10, -48);
+    vertex(9, -45);
+    vertex(11.5, -4);
+    vertex(7.5, 38);
+    vertex(-9.5, 51);
+    vertex(-17, 5.5);
+    vertex(-10, -48);
+    endShape();
+
+    stroke(grayTF);
+    strokeWeight(3);
+    noFill();
+    beginShape();
+    vertex(-10, -48);
+    vertex(9, -45);
+    vertex(11.5, -4);
+    vertex(7.5, 38);
+    vertex(-9.5, 51);
+    vertex(-17, 5.5);
+    vertex(-10, -48);
+    endShape();
+
+    fill(grayTF);
+    scale(0.3);
+    beginShape();
+    endShape();
+    pop();
+  }
+
+  wingTF();
+}
+
+// Background, the space and floor
+function gameBackground() {
+  fill(55, 55, 55);
+  rect(0, (windowHeight / 5) * 4, windowWidth, windowHeight);
+}
+
+//Generates the random x position for the landing spot
+function landingGenerator() {
+  let randomNumber = Math.floor(Math.random() * windowWidth);
+  if (randomNumber > maxWidth) {
+    randomNumber = randomNumber - 125;
+  } else if (randomNumber < minWidth) {
+    randomNumber = randomNumber + 50;
+  }
+  xLanding = randomNumber;
+}
+
+// landing rectangle
+function landing(xLanding) {
+  fill(0, 155, 0, 50);
+
+  quad(
+    xLanding,
+    (windowHeight / 5) * 4.25,
+    xLanding + 100,
+    (windowHeight / 5) * 4.25,
+    xLanding + 75,
+    (windowHeight / 5) * 4.6,
+    xLanding - 25,
+    (windowHeight / 5) * 4.6
+  );
+}
+
+let gameState = 1;
+let scaleR2D2 = 0.1;
+let scaleTF = 1;
+let xR2D2 = windowWidth / 2;
+let yR2D2 = 50;
+let xTF = 400;
+let yTF = 300;
+let yVelocity = 0;
+let xVelocity = 0;
+let rotationR2D2start = 0;
+let rotationR2D2 = 0;
+let rotationTF = 0;
+let gravity = 0;
+let speed = 0.05;
+
+let xLanding;
+let maxWidth = windowWidth - 125;
+let minWidth = 50;
+
+landingGenerator();
+
+function startScreen() {
+  push();
   background(black);
-  r2d2(xR2D2, yR2D2, scaleR2D2, rotation);
+  fill(white);
+  textSize(80);
+  fill(blueStart);
+  textFont("Inconsolata");
+  r2d2(150, 125, 0.3, rotationR2D2start);
+
+  fill(white);
+  textSize(20);
+  rect(windowWidth / 2 - 100, windowHeight - 165, 200, 30);
+  fill(black);
+  text("Space", windowWidth / 2 - 23, windowHeight - 143);
+  fill(white);
+  textSize(40);
+  text("Press", windowWidth / 2 - 45, windowHeight - 200);
+  text("to Start!", windowWidth / 2 - 60, windowHeight - 75);
+  pop();
 
   for (let i = 0; i < 1; i++) {
-    // x = x + Math.cos(rotation) * speed;
-    // y = y + Math.sin(rotation) * speed;
+    rotationR2D2start = rotationR2D2start + speed;
+  }
+}
 
-    // yR2D2 = yR2D2 + Math.sin(rotation) + velocity;
-    //   xR2D2 = xR2D2 + Math.cos(rotation);
-
-    if (keyIsDown(32) && yR2D2 < 600) {
-      if (rotation > 0) {
-        yVelocity = yVelocity - speed * -Math.sin(rotation);
-      } else {
-        yVelocity = yVelocity - speed * Math.sin(rotation);
-      }
-
-      if (rotation > -1.1 && rotation < -0.01) {
-        xVelocity = xVelocity - (speed / 2) * Math.cos(rotation);
-      } else if (rotation < 1.1 && rotation > 0.01) {
-        xVelocity = xVelocity + (speed / 2) * Math.cos(rotation);
-      } else {
-        xVelocity = xVelocity * 0.5;
-      }
-
-      gravity = gravity - speed;
-      yR2D2 = yR2D2 + yVelocity + gravity;
-      xR2D2 = xR2D2 + xVelocity;
-    } else if (yR2D2 < 600) {
-      if (xVelocity < 0) {
-        xVelocity = xVelocity + speed;
-      } else if (xVelocity > 0) {
-        xVelocity = xVelocity - speed;
-      }
-
-      if (yVelocity < 0) {
-        yVelocity = yVelocity + speed;
-      }
-      gravity = gravity + speed / 1.2;
-      yR2D2 = yR2D2 + yVelocity + gravity;
-      xR2D2 = xR2D2 + xVelocity;
-    }
-
-    //Rotation is inspired from garrits car example from:
-    //https://pixelkind.github.io/foundationsofprogramming/programming/
+function draw() {
+  if (gameState === 2) {
+    // Rotation and movement is inspired from garrits car example from:
+    //https://pixelkind.github.io/foundationsofprogramming/programming/12-03-example
     // , with some changes
-    if (keyIsDown(65) && rotation > -1) {
-      rotation = rotation - speed / 2;
-    } else if (keyIsDown(68) && rotation < 1) {
-      rotation = rotation + speed / 2;
+    //Line ... - ...
+
+    background(black);
+    gameBackground();
+    landing(xLanding);
+    r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
+
+    for (let i = 0; i < 1; i++) {
+      if (keyIsDown(32) && yR2D2 < 575) {
+        if (rotationR2D2 > 0) {
+          yVelocity = yVelocity - speed * -Math.sin(rotationR2D2);
+        } else {
+          yVelocity = yVelocity - speed * Math.sin(rotationR2D2);
+        }
+
+        if (rotationR2D2 > -1.1 && rotationR2D2 < 0) {
+          xVelocity = xVelocity + 0.05 * Math.sin(rotationR2D2);
+        } else if (rotationR2D2 < 1.1 && rotationR2D2 > 0) {
+          xVelocity = xVelocity + 0.05 * Math.sin(rotationR2D2);
+        } else {
+          xVelocity = xVelocity * 0.98;
+        }
+
+        gravity = gravity - speed;
+        yR2D2 = yR2D2 + yVelocity + gravity;
+        xR2D2 = xR2D2 + xVelocity;
+      } else if (yR2D2 < 575) {
+        if (xVelocity < 0) {
+          xVelocity = xVelocity + 0.05;
+        } else if (xVelocity > 0) {
+          xVelocity = xVelocity - 0.05;
+        }
+
+        if (yVelocity < 0) {
+          yVelocity = yVelocity + speed;
+        }
+        gravity = gravity + speed / 1.2;
+        yR2D2 = yR2D2 + yVelocity + gravity;
+        xR2D2 = xR2D2 + xVelocity;
+      }
+      if (keyIsDown(65) && rotationR2D2 > -1) {
+        rotationR2D2 = rotationR2D2 - speed / 2;
+      } else if (keyIsDown(68) && rotationR2D2 < 1) {
+        rotationR2D2 = rotationR2D2 + speed / 2;
+      }
+      if (yR2D2 > 575) {
+        gameState = 1;
+      }
+    }
+  } else if (gameState === 1) {
+    startScreen();
+
+    xR2D2 = windowWidth / 2;
+    yR2D2 = 50;
+    xTF = 400;
+    yTF = 300;
+    yVelocity = 0;
+    xVelocity = 0;
+    rotationR2D2 = 0;
+    rotationTF = 0;
+    gravity = 0;
+    speed = 0.05;
+    landingGenerator();
+
+    if (keyIsDown(32)) {
+      gameState = 2;
+    }
+    {
     }
   }
 }
