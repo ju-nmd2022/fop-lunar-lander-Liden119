@@ -1,15 +1,48 @@
+// Rotation and movement is inspired from garrits car example from:
+//https://pixelkind.github.io/foundationsofprogramming/programming/12-03-example
+// , with some changes
+//Line ... - ...
+
 //Colors
 let black = [0, 0, 0];
 let white = [255, 255, 255];
-let blueStart = [130, 180, 255];
+let blueStart = [50, 50, 180];
 let whiteR2D2 = [245, 245, 255];
-let blueR2D2 = [40, 50, 135];
+let colorR2D2 = [40, 50, 135];
 let lightGrayR2D2 = [200, 200, 220];
 let grayTF = [112, 111, 120];
+let floorColor = [55, 55, 55];
+let landingGreen = [0, 155, 0, 50];
 
-//R2-D2
+//variables
+let gameState = 1;
+let scaleR2D2 = 0.1;
+let scaleTF = 1;
+let xR2D2 = windowWidth / 2;
+let yR2D2 = 50;
+let xTF = 400;
+let yTF = 300;
+let yVelocity = 0;
+let xVelocity = 0;
+let rotationR2D2start = 0;
+let rotationR2D2 = 0;
+let rotationTF = 0;
+let gravity = 0;
+let speed = 0.05;
+
+let xLanding;
+let landingY = (windowHeight / 5) * 4.25;
+let maxLandingX;
+let minLandingX;
+let maxWidth = windowWidth - 125;
+let minWidth = 50;
+
+let menuHeight = 360;
+
+//R2-D2 "drawing"
 function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
   push();
+  strokeWeight(1 * scaleR2D2);
   stroke(1 * scaleR2D2);
   translate(xR2D2, yR2D2);
   scale(scaleR2D2);
@@ -25,7 +58,7 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
     pop();
 
     //eye
-    fill(blueR2D2);
+    fill(colorR2D2);
     beginShape();
     vertex(20, -120);
     vertex(-15, -121);
@@ -38,7 +71,7 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
     ellipse(-1, -104, 3);
 
     //blue details
-    fill(blueR2D2);
+    fill(colorR2D2);
     rect(-15, -78, 40, 20);
     rect(-29, -78, 10, 20);
     rect(-50, -85, 17, 27);
@@ -50,7 +83,7 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
     ellipse(42, -70, 22);
     fill(black);
     ellipse(44, -72, 10);
-    fill(blueR2D2);
+    fill(colorR2D2);
     rect(60, -85, 12, 27);
     rect(75, -85, 12, 27);
 
@@ -92,7 +125,7 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
     //function for a blue detail
     function blueDetail(detailX, detailY, rotateDetail) {
       push();
-      fill(blueR2D2);
+      fill(colorR2D2);
       beginShape();
       vertex(detailX, detailY);
       vertex(detailX, detailY + 12);
@@ -112,12 +145,12 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
       pop();
     }
     push();
-    fill(blueR2D2);
+    fill(colorR2D2);
     blueDetail(-55, -22, 0);
     blueDetail(-55, -14, PI);
 
     //details
-    fill(blueR2D2);
+    fill(colorR2D2);
     rect(-55, -40, 110, 7);
     rect(-20, 45, 40, 75);
     rect(-15, 145, 30, 30);
@@ -156,7 +189,7 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
       fill(whiteR2D2);
       rect(100, -40, 40, 100, 6);
       rect(105, 60, 30, 110);
-      fill(blueR2D2);
+      fill(colorR2D2);
       rect(124, 60, 12, 110);
 
       turn = -1;
@@ -164,7 +197,7 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
       fill(whiteR2D2);
       rect(-140, -40, 40, 100, 6);
       rect(-135, 60, 30, 110);
-      fill(blueR2D2);
+      fill(colorR2D2);
       rect(-136, 60, 12, 110);
       turn = 1;
     }
@@ -246,7 +279,7 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
   pop();
 }
 
-//tie fighter
+//tie fighter "drawing"
 function tieFighter(xTF, yTF, scaleTF, rotationTF) {
   push();
   translate(xTF, yTF);
@@ -292,7 +325,7 @@ function tieFighter(xTF, yTF, scaleTF, rotationTF) {
 
 // Background, the space and floor
 function gameBackground() {
-  fill(55, 55, 55);
+  fill(floorColor);
   rect(0, (windowHeight / 5) * 4, windowWidth, windowHeight);
 }
 
@@ -309,7 +342,7 @@ function landingGenerator() {
 
 // landing rectangle
 function landing(xLanding) {
-  fill(0, 155, 0, 50);
+  fill(landingGreen);
 
   quad(
     xLanding,
@@ -323,45 +356,59 @@ function landing(xLanding) {
   );
 }
 
-let gameState = 1;
-let scaleR2D2 = 0.1;
-let scaleTF = 1;
-let xR2D2 = windowWidth / 2;
-let yR2D2 = 50;
-let xTF = 400;
-let yTF = 300;
-let yVelocity = 0;
-let xVelocity = 0;
-let rotationR2D2start = 0;
-let rotationR2D2 = 0;
-let rotationTF = 0;
-let gravity = 0;
-let speed = 0.05;
+// Star Generator
+function stars() {
+  push();
+  translate(x);
+  noStroke();
+  fill(255, 255, 0, 20);
+  ellipse(0, 0, 6);
+  pop();
+}
 
-let xLanding;
-let maxWidth = windowWidth - 125;
-let minWidth = 50;
-
-landingGenerator();
-
+//start screen
 function startScreen() {
   push();
   background(black);
+  textFont("Inconsolata");
+  r2d2(50, 50, 0.1, rotationR2D2start);
+
+  fill(blueStart);
+  rect(200, 50, windowWidth - 400, windowHeight - 100);
   fill(white);
   textSize(80);
-  fill(blueStart);
-  textFont("Inconsolata");
-  r2d2(150, 125, 0.3, rotationR2D2start);
+  text("R2-Lander", windowWidth / 2 - 180, 150);
+
+  strokeWeight(5);
+  line(200, 190, windowWidth - 200, 190);
+
+  strokeWeight(2);
+  fill(200, 200, 200);
+  ellipse(windowWidth / 2 - 150, menuHeight, 120);
+  ellipse(windowWidth / 2, menuHeight, 120);
+  ellipse(windowWidth / 2 + 150, menuHeight, 120);
 
   fill(white);
-  textSize(20);
-  rect(windowWidth / 2 - 100, windowHeight - 165, 200, 30);
+  rect(windowWidth / 2 - 168, menuHeight + 80, 36, 36);
+  rect(windowWidth / 2 - 18, menuHeight + 80, 36, 36);
+  rect(windowWidth / 2 + 132, menuHeight + 80, 36, 36);
+
   fill(black);
-  text("Space", windowWidth / 2 - 23, windowHeight - 143);
+  textSize(25);
+  text("H", windowWidth / 2 - 160, menuHeight + 105);
+  text("E", windowWidth / 2 - 8, menuHeight + 105);
+  text("S", windowWidth / 2 + 143.5, menuHeight + 105);
+
+  textSize(80);
   fill(white);
-  textSize(40);
-  text("Press", windowWidth / 2 - 45, windowHeight - 200);
-  text("to Start!", windowWidth / 2 - 60, windowHeight - 75);
+  text("?", windowWidth / 2 - 168, menuHeight + 26);
+  r2d2(windowWidth / 2, menuHeight - 9, 0.15, 0);
+  push();
+  translate(windowWidth / 2 + 150, menuHeight);
+  strokeWeight(0);
+  triangle(-15, -25, -15, 25, 25, 0);
+  pop();
+
   pop();
 
   for (let i = 0; i < 1; i++) {
@@ -369,20 +416,208 @@ function startScreen() {
   }
 }
 
-function draw() {
-  if (gameState === 2) {
-    // Rotation and movement is inspired from garrits car example from:
-    //https://pixelkind.github.io/foundationsofprogramming/programming/12-03-example
-    // , with some changes
-    //Line ... - ...
+//start screen custom R2 colors
+function startScreenE() {
+  push();
+  background(black);
+  textFont("Inconsolata");
+  r2d2(50, 50, 0.1, rotationR2D2start);
 
+  fill(blueStart);
+  rect(200, 50, windowWidth - 400, windowHeight - 100);
+  fill(white);
+  textSize(80);
+  text("R2-Lander", windowWidth / 2 - 180, 150);
+
+  strokeWeight(5);
+  line(200, 190, windowWidth - 200, 190);
+
+  r2d2(windowWidth / 2, menuHeight + 30, 0.4, 0);
+
+  fill(white);
+  textSize(30);
+  strokeWeight(1.5);
+  rect(windowWidth / 2 - 200, menuHeight - 130, 36, 36);
+  rect(windowWidth / 2 - 150, menuHeight - 130, 36, 36);
+  rect(windowWidth / 2 - 100, menuHeight - 130, 36, 36);
+  rect(windowWidth / 2 - 50, menuHeight - 130, 36, 36);
+  rect(windowWidth / 2 + 130, menuHeight - 130, 100, 36);
+
+  fill(black);
+  text("R", windowWidth / 2 - 194, menuHeight - 103);
+  text("G", windowWidth / 2 - 144, menuHeight - 103);
+  text("B", windowWidth / 2 - 94, menuHeight - 103);
+  text("Y", windowWidth / 2 - 44, menuHeight - 103);
+
+  //backspace key
+  triangle(
+    windowWidth / 2 + 140,
+    menuHeight - 112,
+    windowWidth / 2 + 155,
+    menuHeight - 121,
+    windowWidth / 2 + 155,
+    menuHeight - 103
+  );
+  line(
+    windowWidth / 2 + 140,
+    menuHeight - 112,
+    windowWidth / 2 + 220,
+    menuHeight - 112
+  );
+
+  fill(white);
+  textSize(14);
+  text("BACK", windowWidth / 2 + 164, menuHeight - 75);
+
+  pop();
+
+  for (let i = 0; i < 1; i++) {
+    rotationR2D2start = rotationR2D2start + speed;
+  }
+}
+
+//start screen How to play
+function startScreenH() {
+  push();
+  background(black);
+  textFont("Inconsolata");
+  fill(blueStart);
+  rect(200, 50, windowWidth - 400, windowHeight - 100);
+  fill(white);
+  textSize(80);
+  text("R2-Lander", windowWidth / 2 - 180, 150);
+
+  strokeWeight(5);
+  line(200, 190, windowWidth - 200, 190);
+
+  textSize(30);
+
+  //Rotate mechanics:
+  text("Rotate:", windowWidth / 2 - 136, menuHeight - 100);
+  strokeWeight(1.5);
+  fill(white);
+  rect(windowWidth / 2 + 2, menuHeight - 126, 36, 36);
+  rect(windowWidth / 2 + 83, menuHeight - 126, 36, 36);
+  fill(black);
+  text("A", windowWidth / 2 + 9, menuHeight - 98);
+  text("D", windowWidth / 2 + 90, menuHeight - 98);
+
+  //fly mechanics:
+  fill(white);
+  text("Fly up:", windowWidth / 2 - 136, menuHeight - 50);
+  strokeWeight(1.5);
+  fill(white);
+  rect(windowWidth / 2 + 2, menuHeight - 76, 117, 36);
+  fill(black);
+  text("Space", windowWidth / 2 + 24, menuHeight - 48);
+
+  //instructions
+
+  fill(white);
+  textSize(20);
+  text(
+    "Land within the green box without crashing",
+    windowWidth / 2 - 180,
+    menuHeight + 40
+  );
+  noFill();
+  rect(windowWidth / 2 - 200, menuHeight, 410, 70);
+
+  //backspace key
+  fill(white);
+  rect(windowWidth / 2 - 48, menuHeight + 123, 96, 34);
+  textSize(16);
+  text("BACK", windowWidth / 2 - 20, menuHeight + 178);
+  fill(black);
+  triangle(
+    windowWidth / 2 - 40,
+    menuHeight + 140,
+    windowWidth / 2 - 25,
+    menuHeight + 149,
+    windowWidth / 2 - 25,
+    menuHeight + 131
+  );
+  line(
+    windowWidth / 2 - 40,
+    menuHeight + 140,
+    windowWidth / 2 + 40,
+    menuHeight + 140
+  );
+
+  pop();
+}
+
+//draw function
+function draw() {
+  //At this gameState you are at the starter screen
+  if (gameState === 1) {
+    //all "drawings" at this state
+    startScreen();
+
+    //resets all values
+    floorColor = [55, 55, 55];
+    xR2D2 = windowWidth / 2;
+    yR2D2 = 50;
+    xTF = 400;
+    yTF = 300;
+    yVelocity = 0;
+    xVelocity = 0;
+    rotationR2D2 = 0;
+    rotationTF = 0;
+    gravity = 0;
+    speed = 0.05;
+    landingGenerator();
+    maxLandingX = xLanding + 87.5;
+    minLandingX = xLanding - 12.5;
+
+    //To change state / screen of the game
+    if (keyIsDown(83)) {
+      gameState = 2;
+    } else if (keyIsDown(72)) {
+      gameState = 1.1;
+    } else if (keyIsDown(69)) {
+      gameState = 1.2;
+    }
+  }
+
+  //startscreen when you "open instructions"
+  else if (gameState === 1.1) {
+    //all "drawings" at this state
+    startScreenH();
+
+    if (keyIsDown(8)) {
+      gameState = 1;
+    }
+  }
+
+  //Start screen when you custom R2
+  else if (gameState === 1.2) {
+    //all "drawings" at this state
+    startScreenE();
+
+    if (keyIsDown(82)) {
+      colorR2D2 = [135, 50, 50];
+    } else if (keyIsDown(71)) {
+      colorR2D2 = [50, 135, 50];
+    } else if (keyIsDown(66)) {
+      colorR2D2 = [40, 50, 135];
+    } else if (keyIsDown(89)) {
+      colorR2D2 = [205, 175, 0];
+    } else if (keyIsDown(8)) {
+      gameState = 1;
+    }
+  }
+
+  //At this game state the game is running
+  else if (gameState === 2) {
+    //all "drawings" at this state
     background(black);
     gameBackground();
     landing(xLanding);
     r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
 
     for (let i = 0; i < 1; i++) {
-      if (keyIsDown(32) && yR2D2 < 575) {
+      if (keyIsDown(32) && yR2D2 < landingY) {
         if (rotationR2D2 > 0) {
           yVelocity = yVelocity - speed * -Math.sin(rotationR2D2);
         } else {
@@ -400,7 +635,7 @@ function draw() {
         gravity = gravity - speed;
         yR2D2 = yR2D2 + yVelocity + gravity;
         xR2D2 = xR2D2 + xVelocity;
-      } else if (yR2D2 < 575) {
+      } else if (yR2D2 < landingY) {
         if (xVelocity < 0) {
           xVelocity = xVelocity + 0.05;
         } else if (xVelocity > 0) {
@@ -414,34 +649,64 @@ function draw() {
         yR2D2 = yR2D2 + yVelocity + gravity;
         xR2D2 = xR2D2 + xVelocity;
       }
+
+      //rotation
       if (keyIsDown(65) && rotationR2D2 > -1) {
         rotationR2D2 = rotationR2D2 - speed / 2;
       } else if (keyIsDown(68) && rotationR2D2 < 1) {
         rotationR2D2 = rotationR2D2 + speed / 2;
       }
-      if (yR2D2 > 575) {
-        gameState = 1;
+
+      //Good landing (Win)
+      if (
+        yR2D2 > landingY &&
+        yVelocity + gravity < 1 &&
+        minLandingX < xR2D2 &&
+        maxLandingX > xR2D2
+      ) {
+        gameState = 3;
       }
-    }
-  } else if (gameState === 1) {
-    startScreen();
 
-    xR2D2 = windowWidth / 2;
-    yR2D2 = 50;
-    xTF = 400;
-    yTF = 300;
-    yVelocity = 0;
-    xVelocity = 0;
-    rotationR2D2 = 0;
-    rotationTF = 0;
-    gravity = 0;
-    speed = 0.05;
-    landingGenerator();
+      // Landing with too high speed (crash)
+      else if (yR2D2 > landingY && minLandingX < xR2D2 && maxLandingX > xR2D2) {
+        gameState = 3.1;
+      }
 
-    if (keyIsDown(32)) {
-      gameState = 2;
+      //Landing with correct speed, but outside box
+      else if (yR2D2 > landingY) {
+        gameState = 3.2;
+      }
+      console.log(yVelocity + gravity);
     }
-    {
+  }
+
+  // win screen
+  else if (gameState === 3) {
+    //return to main screen
+    if (keyIsDown(13)) {
+      gameState = 1;
+    }
+  }
+
+  //loose screen crash
+  else if (gameState === 3.1) {
+    //return to main screen
+    if (keyIsDown(13)) {
+      gameState = 1;
+    }
+  }
+
+  //loose screen missed box
+  else if (gameState === 3.2) {
+    floorColor = [55, 0, 0];
+    background(black);
+    gameBackground();
+    landing(xLanding);
+    r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
+
+    //return to main screen
+    if (keyIsDown(13)) {
+      gameState = 1;
     }
   }
 }
