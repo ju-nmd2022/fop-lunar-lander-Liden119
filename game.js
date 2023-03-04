@@ -1,6 +1,9 @@
-// Rotation and movement is inspired from garrits car example from:
+// Rotation is inspired from garrits car example from:
 //https://pixelkind.github.io/foundationsofprogramming/programming/12-03-example
 // , with some changes
+//Line ... - ...
+
+//Star generator for the background is copied from..
 //Line ... - ...
 
 //Colors
@@ -11,8 +14,10 @@ let whiteR2D2 = [245, 245, 255];
 let colorR2D2 = [40, 50, 135];
 let lightGrayR2D2 = [200, 200, 220];
 let grayTF = [112, 111, 120];
-let floorColor = [55, 55, 55];
-let landingGreen = [0, 155, 0, 50];
+let landingBox = [56, 59, 59];
+let lavaOrange = [207, 83, 37];
+let lavaRed = [192, 55, 37];
+let lavaYellow = [195, 127, 30];
 
 //variables
 let gameState = 1;
@@ -32,12 +37,33 @@ let speed = 0.05;
 
 let xLanding;
 let landingY = (windowHeight / 5) * 4.25;
-let maxLandingX;
-let minLandingX;
 let maxWidth = windowWidth - 125;
 let minWidth = 50;
-
 let menuHeight = 360;
+
+//Stars
+let stars = [];
+
+//star generator
+function createStar() {
+  const x = Math.random() * width;
+  const y = Math.random() * height;
+  return { x: x, y: y };
+}
+
+function drawStar(star) {
+  push();
+  translate(star.x, star.y);
+  noStroke();
+  fill(255, 255, 255, 140);
+  ellipse(0, 0, 1);
+  pop();
+}
+
+for (let i = 0; i < 500; i++) {
+  const star = createStar();
+  stars.push(star);
+}
 
 //R2-D2 "drawing"
 function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
@@ -323,10 +349,18 @@ function tieFighter(xTF, yTF, scaleTF, rotationTF) {
   wingTF();
 }
 
-// Background, the space and floor
-function gameBackground() {
-  fill(floorColor);
-  rect(0, (windowHeight / 5) * 4, windowWidth, windowHeight);
+//the lava
+function lava() {
+  push();
+  fill(lavaRed);
+  noStroke();
+  rect(0, (windowHeight / 5) * 4.25, windowWidth, windowHeight);
+  fill(lavaOrange);
+  rect(0, (windowHeight / 5) * 4.25, windowWidth, 50);
+  fill(lavaYellow);
+  rect(0, (windowHeight / 5) * 4.25, windowWidth, 20);
+
+  pop();
 }
 
 //Generates the random x position for the landing spot
@@ -342,34 +376,33 @@ function landingGenerator() {
 
 // landing rectangle
 function landing(xLanding) {
-  fill(landingGreen);
+  push();
+  noStroke();
+  fill(landingBox);
 
   quad(
     xLanding,
-    (windowHeight / 5) * 4.25,
+    (windowHeight / 5) * 4.24,
     xLanding + 100,
-    (windowHeight / 5) * 4.25,
-    xLanding + 75,
+    (windowHeight / 5) * 4.24,
+    xLanding + 70,
     (windowHeight / 5) * 4.6,
-    xLanding - 25,
+    xLanding + 30,
     (windowHeight / 5) * 4.6
   );
-}
 
-// Star Generator
-function stars() {
-  push();
-  translate(x);
-  noStroke();
-  fill(255, 255, 0, 20);
-  ellipse(0, 0, 6);
   pop();
 }
 
 //start screen
 function startScreen() {
   push();
+  //black background + stars
   background(black);
+  for (let star of stars) {
+    drawStar(star);
+  }
+
   textFont("Inconsolata");
   r2d2(50, 50, 0.1, rotationR2D2start);
 
@@ -419,7 +452,12 @@ function startScreen() {
 //start screen custom R2 colors
 function startScreenE() {
   push();
+  //black background + stars
   background(black);
+  for (let star of stars) {
+    drawStar(star);
+  }
+
   textFont("Inconsolata");
   r2d2(50, 50, 0.1, rotationR2D2start);
 
@@ -479,7 +517,12 @@ function startScreenE() {
 //start screen How to play
 function startScreenH() {
   push();
+  //black background + stars
   background(black);
+  for (let star of stars) {
+    drawStar(star);
+  }
+
   textFont("Inconsolata");
   fill(blueStart);
   rect(200, 50, windowWidth - 400, windowHeight - 100);
@@ -516,8 +559,8 @@ function startScreenH() {
   fill(white);
   textSize(20);
   text(
-    "Land within the green box without crashing",
-    windowWidth / 2 - 180,
+    "Land within the gray area without crashing",
+    windowWidth / 2 - 167,
     menuHeight + 40
   );
   noFill();
@@ -547,11 +590,66 @@ function startScreenH() {
   pop();
 }
 
+//Press enter to start
+function pressStart(xPress, yPress) {
+  push();
+  translate(xPress, yPress);
+  fill(white);
+  rect(-100, -18, 200, 36);
+  fill(black);
+  textSize(20);
+  text("SPACE", -32, 7);
+
+  fill(white);
+  textSize(30);
+  text("Press", -36, -50);
+  text("To Start!", -53, 75);
+
+  pop();
+}
+
+//crashing screen
+function crashScreen(xCrash, yCrash) {
+  push();
+  translate(xCrash, yCrash);
+  rotate(0.3);
+
+  fill(104, 18, 12);
+
+  function explosion(scaleExplosion) {
+    scale(scaleExplosion);
+    beginShape();
+    vertex(-45, -60);
+    vertex(-20, -160);
+    vertex(75, -40);
+    vertex(180, 0);
+    vertex(140, 40);
+    vertex(140, 70);
+    vertex(110, 80);
+    vertex(140, 140);
+    vertex(30, 120);
+    vertex(-80, 160);
+    vertex(-70, 100);
+    vertex(-90, 80);
+    vertex(-80, 60);
+    vertex(-180, 0);
+    vertex(-45, -60);
+    endShape();
+  }
+  explosion(1.3);
+  fill(150, 81, 34);
+  explosion(0.8);
+  fill(156, 141, 37);
+  explosion(0.8);
+  pop();
+}
+
+function winScreen(xWin, yWin) {}
+
 //draw function
 function draw() {
   //At this gameState you are at the starter screen
   if (gameState === 1) {
-    //all "drawings" at this state
     startScreen();
 
     //resets all values
@@ -567,12 +665,10 @@ function draw() {
     gravity = 0;
     speed = 0.05;
     landingGenerator();
-    maxLandingX = xLanding + 87.5;
-    minLandingX = xLanding - 12.5;
 
     //To change state / screen of the game
     if (keyIsDown(83)) {
-      gameState = 2;
+      gameState = 1.3;
     } else if (keyIsDown(72)) {
       gameState = 1.1;
     } else if (keyIsDown(69)) {
@@ -608,14 +704,40 @@ function draw() {
     }
   }
 
+  //Opens game screen and start when you press space
+  else if (gameState === 1.3) {
+    //black background + stars
+    background(black);
+    for (let star of stars) {
+      drawStar(star);
+    }
+
+    //other drawings
+    lava();
+    landing(xLanding);
+    r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
+    pressStart(windowWidth / 2, windowHeight / 2);
+
+    //Starts the game when you press space
+    if (keyIsDown(32)) {
+      gameState = 2;
+    }
+  }
+
   //At this game state the game is running
   else if (gameState === 2) {
-    //all "drawings" at this state
+    //black background + stars
     background(black);
-    gameBackground();
+    for (let star of stars) {
+      drawStar(star);
+    }
+
+    //other drawings
+    lava();
     landing(xLanding);
     r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
 
+    //Velocity and gravity in a loop
     for (let i = 0; i < 1; i++) {
       if (keyIsDown(32) && yR2D2 < landingY) {
         if (rotationR2D2 > 0) {
@@ -659,50 +781,55 @@ function draw() {
 
       //Good landing (Win)
       if (
-        yR2D2 > landingY &&
-        yVelocity + gravity < 1 &&
-        minLandingX < xR2D2 &&
-        maxLandingX > xR2D2
+        yR2D2 > landingY - 30 &&
+        yVelocity + gravity < 0.7 &&
+        xLanding < xR2D2 &&
+        xLanding + 100 > xR2D2 &&
+        rotationR2D2 < 0.15
       ) {
         gameState = 3;
       }
 
-      // Landing with too high speed (crash)
-      else if (yR2D2 > landingY && minLandingX < xR2D2 && maxLandingX > xR2D2) {
+      //no win landing
+      else if (yR2D2 > landingY - 30) {
         gameState = 3.1;
+        fill(255, 0, 0);
       }
-
-      //Landing with correct speed, but outside box
-      else if (yR2D2 > landingY) {
-        gameState = 3.2;
-      }
-      console.log(yVelocity + gravity);
     }
   }
 
   // win screen
   else if (gameState === 3) {
-    //return to main screen
-    if (keyIsDown(13)) {
-      gameState = 1;
-    }
-  }
-
-  //loose screen crash
-  else if (gameState === 3.1) {
-    //return to main screen
-    if (keyIsDown(13)) {
-      gameState = 1;
-    }
-  }
-
-  //loose screen missed box
-  else if (gameState === 3.2) {
-    floorColor = [55, 0, 0];
+    //black background + stars
     background(black);
-    gameBackground();
+    for (let star of stars) {
+      drawStar(star);
+    }
+
+    //other drawings
+    lava();
+    landing(xLanding);
+    rotationR2D2 = 0;
+    r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
+
+    //return to main screen
+    if (keyIsDown(13)) {
+      gameState = 1;
+    }
+  }
+
+  //loose screen
+  else if (gameState === 3.1) {
+    //black background and stars
+    background(black);
+    for (let star of stars) {
+      drawStar(star);
+    }
+
+    lava();
     landing(xLanding);
     r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
+    rect(0, 0, 200, 200);
 
     //return to main screen
     if (keyIsDown(13)) {
