@@ -18,6 +18,8 @@ let landingBox = [56, 59, 59];
 let lavaOrange = [207, 83, 37];
 let lavaRed = [192, 55, 37];
 let lavaYellow = [195, 127, 30];
+let greenWin = [56, 78, 41];
+let redLoose = [106, 0, 0];
 
 //variables
 let gameState = 1;
@@ -34,6 +36,7 @@ let rotationR2D2 = 0;
 let rotationTF = 0;
 let gravity = 0;
 let speed = 0.05;
+let time = 1;
 
 let xLanding;
 let landingY = (windowHeight / 5) * 4.25;
@@ -50,7 +53,6 @@ function createStar() {
   const y = Math.random() * height;
   return { x: x, y: y };
 }
-
 function drawStar(star) {
   push();
   translate(star.x, star.y);
@@ -59,7 +61,6 @@ function drawStar(star) {
   ellipse(0, 0, 1);
   pop();
 }
-
 for (let i = 0; i < 500; i++) {
   const star = createStar();
   stars.push(star);
@@ -349,20 +350,6 @@ function tieFighter(xTF, yTF, scaleTF, rotationTF) {
   wingTF();
 }
 
-//the lava
-function lava() {
-  push();
-  fill(lavaRed);
-  noStroke();
-  rect(0, (windowHeight / 5) * 4.25, windowWidth, windowHeight);
-  fill(lavaOrange);
-  rect(0, (windowHeight / 5) * 4.25, windowWidth, 50);
-  fill(lavaYellow);
-  rect(0, (windowHeight / 5) * 4.25, windowWidth, 20);
-
-  pop();
-}
-
 //Generates the random x position for the landing spot
 function landingGenerator() {
   let randomNumber = Math.floor(Math.random() * windowWidth);
@@ -376,6 +363,15 @@ function landingGenerator() {
 
 // landing rectangle
 function landing(xLanding) {
+  push();
+  fill(lavaRed);
+  noStroke();
+  rect(0, (windowHeight / 5) * 4.25, windowWidth, windowHeight);
+  fill(lavaOrange);
+  rect(0, (windowHeight / 5) * 4.25, windowWidth, 50);
+  fill(lavaYellow);
+  rect(0, (windowHeight / 5) * 4.25, windowWidth, 20);
+  pop();
   push();
   noStroke();
   fill(landingBox);
@@ -608,43 +604,53 @@ function pressStart(xPress, yPress) {
   pop();
 }
 
-//crashing screen
-function crashScreen(xCrash, yCrash) {
+//loosing screen
+function looseSceen() {
   push();
-  translate(xCrash, yCrash);
-  rotate(0.3);
+  fill(redLoose);
+  rect(0, windowHeight / 4, windowWidth, windowHeight / 4);
+  fill(white);
+  textSize(40);
+  text("You Lost!", windowWidth / 6, windowHeight / 3);
+  textSize(26);
+  text("Time: " + time + "s", windowWidth / 6, windowHeight / 2.4);
 
-  fill(104, 18, 12);
+  fill(white);
+  rect(windowWidth / 2 + 160, windowHeight / 2.4 - 25, 36, 36);
+  fill(black);
+  textSize(20);
+  text("M", windowWidth / 2 + 169, windowHeight / 2.4);
 
-  function explosion(scaleExplosion) {
-    scale(scaleExplosion);
-    beginShape();
-    vertex(-45, -60);
-    vertex(-20, -160);
-    vertex(75, -40);
-    vertex(180, 0);
-    vertex(140, 40);
-    vertex(140, 70);
-    vertex(110, 80);
-    vertex(140, 140);
-    vertex(30, 120);
-    vertex(-80, 160);
-    vertex(-70, 100);
-    vertex(-90, 80);
-    vertex(-80, 60);
-    vertex(-180, 0);
-    vertex(-45, -60);
-    endShape();
-  }
-  explosion(1.3);
-  fill(150, 81, 34);
-  explosion(0.8);
-  fill(156, 141, 37);
-  explosion(0.8);
+  fill(white);
+  textSize(26);
+  text("Rertun to Menu:", windowWidth / 2.3, windowHeight / 2.4);
+
   pop();
 }
 
-function winScreen(xWin, yWin) {}
+//win screen
+function winScreen() {
+  push();
+  fill(greenWin);
+  rect(0, windowHeight / 4, windowWidth, windowHeight / 4);
+  fill(white);
+  textSize(40);
+  text("Good landing!", windowWidth / 6, windowHeight / 3);
+  textSize(26);
+  text("Time: " + time + "s", windowWidth / 6, windowHeight / 2.4);
+
+  fill(white);
+  rect(windowWidth / 2 + 160, windowHeight / 2.4 - 25, 36, 36);
+  fill(black);
+  textSize(20);
+  text("M", windowWidth / 2 + 169, windowHeight / 2.4);
+
+  fill(white);
+  textSize(26);
+  text("Rertun to Menu:", windowWidth / 2.3, windowHeight / 2.4);
+
+  pop();
+}
 
 //draw function
 function draw() {
@@ -713,7 +719,6 @@ function draw() {
     }
 
     //other drawings
-    lava();
     landing(xLanding);
     r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
     pressStart(windowWidth / 2, windowHeight / 2);
@@ -733,7 +738,6 @@ function draw() {
     }
 
     //other drawings
-    lava();
     landing(xLanding);
     r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
 
@@ -807,13 +811,13 @@ function draw() {
     }
 
     //other drawings
-    lava();
     landing(xLanding);
     rotationR2D2 = 0;
     r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
+    winScreen();
 
     //return to main screen
-    if (keyIsDown(13)) {
+    if (keyIsDown(77)) {
       gameState = 1;
     }
   }
@@ -826,13 +830,12 @@ function draw() {
       drawStar(star);
     }
 
-    lava();
     landing(xLanding);
     r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
-    rect(0, 0, 200, 200);
+    looseSceen();
 
     //return to main screen
-    if (keyIsDown(13)) {
+    if (keyIsDown(77)) {
       gameState = 1;
     }
   }
