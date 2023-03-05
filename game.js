@@ -1,3 +1,10 @@
+function setup() {
+  createCanvas(1000, 600);
+  frameRate(30);
+}
+
+let windowWidth = 1000;
+let windowHeight = 600;
 // Rotation is inspired from garrits car example from:
 //https://pixelkind.github.io/foundationsofprogramming/programming/12-03-example
 // , with some changes
@@ -98,8 +105,8 @@ function updateCrashR2D2(particleR2D2) {
 //Star generator
 let stars = [];
 function createStar() {
-  const x = Math.random() * width;
-  const y = Math.random() * height;
+  const x = Math.random() * windowWidth;
+  const y = Math.random() * windowHeight;
   return { x: x, y: y };
 }
 function drawStar(star) {
@@ -495,14 +502,6 @@ function startScreen() {
   triangle(-15, -25, -15, 25, 25, 0);
   pop();
 
-  textSize(15);
-  fill(white);
-  text(
-    "(OBS: If you change screen-width or height, restart the game as well!)",
-    windowWidth / 2 - 218,
-    70
-  );
-
   //crown draw
   function crown(xCrown, yCrown, scaleCrown) {
     push();
@@ -523,10 +522,13 @@ function startScreen() {
   }
 
   if (bestTime !== 0) {
+    fill(white);
     crown(windowWidth / 2 - 25, 250, 0.5);
     textSize(25);
     text(bestTime + "s", windowWidth / 2 + 5, 250);
   } else if (bestTime === 0) {
+    fill(white);
+    textSize(15);
     text("Win first to see highscore", windowWidth / 2 - 75, 250);
   }
 
