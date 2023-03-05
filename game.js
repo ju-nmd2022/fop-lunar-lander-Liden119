@@ -20,12 +20,15 @@ let lavaYellow = [195, 127, 30];
 let greenWin = [56, 78, 41];
 let redLoose = [106, 0, 0];
 let asteroidGray = [150, 150, 150];
+let crownColor = [234, 179, 28];
+let rocketFireColor = [20, 200, 250];
 
-//variables
+//R2 variables
 let gameState = 1;
 let scaleR2D2 = 0.1;
 let xR2D2 = windowWidth / 2;
 let yR2D2 = 50;
+let rocketFire = false;
 
 //movement variables
 let yVelocity = 0;
@@ -38,7 +41,7 @@ let speed = 0.05;
 //
 let counter = 0;
 let time = 1;
-let bestTime = -1;
+let bestTime = 0;
 let reason;
 
 //asteroid variables
@@ -339,10 +342,26 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
     pop();
   }
 
+  function r2RocketFire(turn) {
+    push();
+    fill(rocketFireColor);
+    beginShape();
+    vertex(-160 * turn, 70);
+    bezierVertex(-160 * turn, 75, -165 * turn, 105, -155 * turn, 180);
+    bezierVertex(-145 * turn, 105, -150 * turn, 75, -150 * turn, 70);
+    endShape();
+    pop();
+  }
+
   r2Head();
   r2Body();
   r2Rocket(1);
   r2Rocket(-1);
+
+  if (rocketFire === true) {
+    r2RocketFire(1);
+    r2RocketFire(-1);
+  }
 
   //right leg (-1)
   r2Legs(-1);
@@ -483,6 +502,33 @@ function startScreen() {
     windowWidth / 2 - 218,
     70
   );
+
+  //crown draw
+  function crown(xCrown, yCrown, scaleCrown) {
+    push();
+    fill(crownColor);
+    translate(xCrown, yCrown);
+    scale(scaleCrown);
+    beginShape();
+    vertex(-25, 0);
+    vertex(25, 0);
+    vertex(35, -35);
+    vertex(15, -25);
+    vertex(0, -40);
+    vertex(-15, -25);
+    vertex(-35, -35);
+    vertex(-25, 0);
+    endShape();
+    pop();
+  }
+
+  if (bestTime !== 0) {
+    crown(windowWidth / 2 - 25, 250, 0.5);
+    textSize(25);
+    text(bestTime + "s", windowWidth / 2 + 5, 250);
+  } else if (bestTime === 0) {
+    text("Win first to see highscore", windowWidth / 2 - 75, 250);
+  }
 
   pop();
 }
@@ -830,6 +876,13 @@ function draw() {
     text(time + "s", 50, 75);
     pop();
 
+    // "fire from rockets" animation
+    if (keyIsDown(32)) {
+      rocketFire = true;
+    } else {
+      rocketFire = false;
+    }
+
     //rotation
     if (keyIsDown(65) && rotationR2D2 > -1) {
       rotationR2D2 = rotationR2D2 - speed / 2;
@@ -960,6 +1013,12 @@ function draw() {
     rotationR2D2 = 0;
     r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
     winScreen();
+
+    if (bestTime === 0) {
+      bestTime = time;
+    } else if (bestTime > time) {
+      bestTime = time;
+    }
 
     //return to main screen
     if (keyIsDown(77)) {
