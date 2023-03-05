@@ -953,6 +953,20 @@ function draw() {
         crashR2D2.push(particleR2D2);
       }
     }
+    if (
+      xAsteroid3 - 35 < xR2D2 &&
+      xR2D2 < xAsteroid3 + 35 &&
+      yAsteroid3 - 55 < yR2D2 &&
+      yAsteroid3 + 35 > yR2D2
+    ) {
+      gameState = 3.1;
+      reason = "Collision";
+      //Crash "animation"
+      for (let i = 0; i < 100; i++) {
+        let particleR2D2 = createCrashR2D2(xR2D2, yR2D2 + 25);
+        crashR2D2.push(particleR2D2);
+      }
+    }
 
     //Good landing (Win)
     if (
