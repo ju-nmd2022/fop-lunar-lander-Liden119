@@ -13,33 +13,46 @@ let blueStart = [50, 50, 180];
 let whiteR2D2 = [245, 245, 255];
 let colorR2D2 = [40, 50, 135];
 let lightGrayR2D2 = [200, 200, 220];
-let grayTF = [112, 111, 120];
 let landingBox = [56, 59, 59];
 let lavaOrange = [207, 83, 37];
 let lavaRed = [192, 55, 37];
 let lavaYellow = [195, 127, 30];
 let greenWin = [56, 78, 41];
 let redLoose = [106, 0, 0];
+let asteroidGray = [150, 150, 150];
 
 //variables
 let gameState = 1;
 let scaleR2D2 = 0.1;
-let scaleTF = 1;
 let xR2D2 = windowWidth / 2;
 let yR2D2 = 50;
-let xTF = 400;
-let yTF = 300;
+
+//movement variables
 let yVelocity = 0;
 let xVelocity = 0;
 let rotationR2D2start = 0;
 let rotationR2D2 = 0;
-let rotationTF = 0;
 let gravity = 0;
 let speed = 0.05;
+
+//
 let counter = 0;
 let time = 1;
 let bestTime = -1;
 let reason;
+
+//asteroid variables
+let asteroidActive1 = false;
+let asteroidActive2 = false;
+let asteroidActive3 = false;
+let spin = 0;
+let xAsteroid1;
+let yAsteroid1;
+let xAsteroid2;
+let yAsteroid2;
+let xAsteroid3;
+let yAsteroid3;
+let asteroidSpeed = 3;
 
 let xLanding;
 let landingY = (windowHeight / 5) * 4.25;
@@ -339,48 +352,46 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
   pop();
 }
 
-//tie fighter "drawing"
-function tieFighter(xTF, yTF, scaleTF, rotationTF) {
+//asteroid "drawing"
+function asteroid(xAsteroid, yAsteroid, scaleAsteroid, rotationAsteroid) {
   push();
-  translate(xTF, yTF);
-  stroke(1 * scaleTF);
-  scale(scaleTF);
-  rotate(rotationTF);
 
-  function wingTF(wingTFx, wingTFy) {
-    push();
-    fill(black);
-    beginShape();
-    vertex(-10, -48);
-    vertex(9, -45);
-    vertex(11.5, -4);
-    vertex(7.5, 38);
-    vertex(-9.5, 51);
-    vertex(-17, 5.5);
-    vertex(-10, -48);
-    endShape();
+  translate(xAsteroid, yAsteroid, scaleAsteroid, rotationAsteroid);
+  scale(scaleAsteroid);
+  rotate(rotationAsteroid);
 
-    stroke(grayTF);
-    strokeWeight(3);
-    noFill();
-    beginShape();
-    vertex(-10, -48);
-    vertex(9, -45);
-    vertex(11.5, -4);
-    vertex(7.5, 38);
-    vertex(-9.5, 51);
-    vertex(-17, 5.5);
-    vertex(-10, -48);
-    endShape();
+  fill(asteroidGray);
+  beginShape();
+  vertex(-150, 0);
+  bezierVertex(-130, -80, -130, -90, -50, -110);
+  bezierVertex(-40, -115, -30, -115, -20, -120);
+  bezierVertex(-10, -128, 20, -125, 40, -120);
+  bezierVertex(70, -110, 150, -60, 150, 0);
+  bezierVertex(130, 80, 130, 90, 100, 110);
+  bezierVertex(40, 135, 20, 120, 0, 125);
+  bezierVertex(-75, 130, -150, 120, -150, 0);
+  endShape();
 
-    fill(grayTF);
-    scale(0.3);
-    beginShape();
-    endShape();
-    pop();
-  }
+  fill(160, 170, 170);
+  push();
+  rotate(0.5);
+  ellipse(40, -70, 30, 20);
+  pop();
+  push();
+  rotate(-0.3);
+  ellipse(70, 80, 50, 25);
+  pop();
 
-  wingTF();
+  ellipse(-70, -60, 50, 25);
+  ellipse(-40, 30, 60, 35);
+  ellipse(-70, 70, 20, 10);
+  ellipse(60, 20, 20, 10);
+  ellipse(0, -20, 30, 15);
+  ellipse(-100, 0, 20, 10);
+  ellipse(20, -100, 20, 10);
+  ellipse(30, 100, 30, 15);
+
+  pop();
 }
 
 //Generates the random x position for the landing spot
@@ -698,20 +709,19 @@ function draw() {
     startScreen();
     //resets all values
     counter = 0;
-    floorColor = [55, 55, 55];
     xR2D2 = windowWidth / 2;
     yR2D2 = 50;
-    xTF = 400;
-    yTF = 300;
     yVelocity = 0;
     xVelocity = 0;
     rotationR2D2 = 0;
-    rotationTF = 0;
     gravity = 0;
     speed = 0.05;
     landingGenerator();
 
     crashR2D2 = [];
+
+    asteroidActive1 = false;
+    asteroidActive2 = false;
 
     //To change state / screen of the game
     if (keyIsDown(83)) {
@@ -766,6 +776,50 @@ function draw() {
     landing(xLanding);
     r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2);
 
+    //asteroid movement and "spawning"
+    if (asteroidActive1 === false) {
+      xAsteroid1 = -20;
+      yAsteroid1 = landingY - 50;
+      asteroidActive1 = true;
+    } else if (asteroidActive1 === true) {
+      asteroid(xAsteroid1, yAsteroid1, 0.2, spin);
+      xAsteroid1 = xAsteroid1 + asteroidSpeed;
+      spin = spin + 0.05;
+    }
+
+    //asteroid2 movement and "spawning"
+    if (asteroidActive2 === false) {
+      xAsteroid2 = windowWidth + 20;
+      yAsteroid2 = landingY - 150;
+      asteroidActive2 = true;
+    } else if (asteroidActive2 === true) {
+      asteroid(xAsteroid2, yAsteroid2, 0.2, spin);
+      xAsteroid2 = xAsteroid2 - asteroidSpeed * 2;
+      spin = spin + 0.05;
+    }
+
+    //asteroid3 movement and "spawning"
+    if (asteroidActive3 === false) {
+      xAsteroid3 = -20;
+      yAsteroid3 = landingY - 250;
+      asteroidActive3 = true;
+    } else if (asteroidActive3 === true) {
+      asteroid(xAsteroid3, yAsteroid3, 0.2, spin);
+      xAsteroid3 = xAsteroid3 + asteroidSpeed * 1.5;
+      spin = spin + 0.05;
+    }
+
+    //Makes an asteroid "false" so it spawns a new one
+    if (xAsteroid1 > windowWidth + 20) {
+      asteroidActive1 = false;
+    }
+    if (xAsteroid2 < -20) {
+      asteroidActive2 = false;
+    }
+    if (xAsteroid3 > windowWidth + 20) {
+      asteroidActive3 = false;
+    }
+
     //timer, 30 tics on counter = 1s
     // Counter = 30 --> time = 1. Time = s
     counter = counter + 1;
@@ -815,6 +869,36 @@ function draw() {
       gravity = gravity + speed / 1.2;
       yR2D2 = yR2D2 + yVelocity + gravity;
       xR2D2 = xR2D2 + xVelocity;
+    }
+
+    //checks asteroid collision
+    if (
+      xAsteroid1 - 35 < xR2D2 &&
+      xR2D2 < xAsteroid1 + 35 &&
+      yAsteroid1 - 55 < yR2D2 &&
+      yAsteroid1 + 35 > yR2D2
+    ) {
+      gameState = 3.1;
+      reason = "Collision";
+      //Crash "animation"
+      for (let i = 0; i < 100; i++) {
+        let particleR2D2 = createCrashR2D2(xR2D2, yR2D2 + 25);
+        crashR2D2.push(particleR2D2);
+      }
+    }
+    if (
+      xAsteroid2 - 35 < xR2D2 &&
+      xR2D2 < xAsteroid2 + 35 &&
+      yAsteroid2 - 55 < yR2D2 &&
+      yAsteroid2 + 35 > yR2D2
+    ) {
+      gameState = 3.1;
+      reason = "Collision";
+      //Crash "animation"
+      for (let i = 0; i < 100; i++) {
+        let particleR2D2 = createCrashR2D2(xR2D2, yR2D2 + 25);
+        crashR2D2.push(particleR2D2);
+      }
     }
 
     //Good landing (Win)
