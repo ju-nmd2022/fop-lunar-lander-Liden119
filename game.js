@@ -59,9 +59,9 @@ function drawCrashR2D2(particleR2D2) {
   push();
   translate(particleR2D2.x, particleR2D2.y);
   noStroke();
-  fill(0, 0, 150);
+  fill(colorR2D2);
   ellipse(0, 0, 2);
-  fill(255, 255, 255);
+  fill(white);
   ellipse(0, 0, 1);
   pop();
 }
