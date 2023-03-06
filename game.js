@@ -1,6 +1,7 @@
 function setup() {
-  createCanvas(1000, 600);
+  const canvas = createCanvas(1000, 600);
   frameRate(30);
+  canvas.parent("midScreen");
 }
 
 let windowWidth = 1000;
@@ -586,14 +587,6 @@ function startScreenE() {
   textSize(14);
   text("BACK", windowWidth / 2 + 164, menuHeight - 75);
 
-  textSize(15);
-  fill(white);
-  text(
-    "(OBS: If you change screen-width or height, restart the game as well!)",
-    windowWidth / 2 - 218,
-    70
-  );
-
   pop();
 }
 
@@ -663,14 +656,6 @@ function startScreenH() {
     menuHeight + 140,
     windowWidth / 2 + 40,
     menuHeight + 140
-  );
-
-  textSize(15);
-  fill(white);
-  text(
-    "(OBS: If you change screen-width or height, restart the game as well!)",
-    windowWidth / 2 - 218,
-    70
   );
 
   pop();
@@ -892,7 +877,8 @@ function draw() {
       rotationR2D2 = rotationR2D2 + speed / 2;
     }
 
-    //Velocity and gravity
+    //velocity and gravity
+    //Spacekey down movement
     if (keyIsDown(32) && yR2D2 < landingY) {
       if (rotationR2D2 > 0) {
         yVelocity = yVelocity - speed * -Math.sin(rotationR2D2);
@@ -911,7 +897,9 @@ function draw() {
       gravity = gravity - speed;
       yR2D2 = yR2D2 + yVelocity + gravity;
       xR2D2 = xR2D2 + xVelocity;
-    } else if (yR2D2 < landingY) {
+    }
+    //No space key, (loose velocity and gain gravity)
+    else if (yR2D2 < landingY) {
       if (xVelocity < 0) {
         xVelocity = xVelocity + 0.05;
       } else if (xVelocity > 0) {
@@ -941,6 +929,7 @@ function draw() {
         crashR2D2.push(particleR2D2);
       }
     }
+    //checks asteroid collision
     if (
       xAsteroid2 - 35 < xR2D2 &&
       xR2D2 < xAsteroid2 + 35 &&
@@ -955,6 +944,7 @@ function draw() {
         crashR2D2.push(particleR2D2);
       }
     }
+    //checks asteroid collision
     if (
       xAsteroid3 - 35 < xR2D2 &&
       xR2D2 < xAsteroid3 + 35 &&
@@ -973,7 +963,7 @@ function draw() {
     //Good landing (Win)
     if (
       yR2D2 > landingY - 30 &&
-      yVelocity + gravity < 0.7 &&
+      yVelocity + gravity <= 0.8 &&
       xLanding < xR2D2 &&
       xLanding + 100 > xR2D2 &&
       rotationR2D2 < 0.2
@@ -995,7 +985,7 @@ function draw() {
       }
     }
     //too much speed
-    else if (yR2D2 > landingY - 30 && yVelocity + gravity > 0.7) {
+    else if (yR2D2 > landingY - 30 && yVelocity + gravity > 0.8) {
       gameState = 3.1;
       reason = "Too much speed";
 
