@@ -4,15 +4,17 @@ function setup() {
   canvas.parent("midScreen");
 }
 
+//Set window width and high to the canvas size
 let windowWidth = 1000;
 let windowHeight = 600;
-// Rotation is inspired from garrits car example from:
-//https://pixelkind.github.io/foundationsofprogramming/programming/12-03-example
-// , with some changes
-//Line ... - ...
 
-//Star generator for the background is copied from..
-//Line ... - ...
+//Star generator for the background is copied from the snow particle example (Garrits Lecture)
+//With small changes
+//Line 112 - 130
+
+//R2-D2 Crash animation is copied from the particle example (Garrits Lecture)
+//With some changes
+//Line 76-105
 
 //Colors
 let black = [0, 0, 0];
@@ -46,10 +48,11 @@ let rotationR2D2 = 0;
 let gravity = 0;
 let speed = 0.05;
 
-//
+//Time Variables
 let counter = 0;
 let time = 1;
 let bestTime = 0;
+//Reason why you die
 let reason;
 
 //asteroid variables
@@ -65,13 +68,16 @@ let xAsteroid3;
 let yAsteroid3;
 let asteroidSpeed = 3;
 
+//Landing "area" Variables
 let xLanding;
 let landingY = (windowHeight / 5) * 4.25;
 let maxWidth = windowWidth - 125;
 let minWidth = 50;
+
+//Menu height, used to change the whole menu "symbol" heights
 let menuHeight = 360;
 
-//R2D2 Crash "animation"
+//R2D2 Crash "animation" line 76-105
 let crashR2D2 = [];
 function createCrashR2D2(x, y) {
   const v = 0.2 + Math.random();
@@ -132,7 +138,6 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
   scale(scaleR2D2);
   rotate(rotationR2D2);
 
-  // Head structure
   function r2Head() {
     push();
     fill(lightGrayR2D2);
@@ -265,7 +270,7 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
     pop();
   }
 
-  // Make the legs turn by have a negative or positive number for "turn"
+  // Have a negative or positive number for "turn" (Changes left or right)
   function r2Legs(turn) {
     push();
 
@@ -299,7 +304,6 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
     endShape();
     pop();
   }
-
   function r2Rocket(turn) {
     push();
 
@@ -349,7 +353,6 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
 
     pop();
   }
-
   function r2RocketFire(turn) {
     push();
     fill(rocketFireColor);
@@ -361,19 +364,19 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
     pop();
   }
 
+  //Draw all the functions
   r2Head();
   r2Body();
   r2Rocket(1);
   r2Rocket(-1);
 
+  //Only activate fire when R2 fly up
   if (rocketFire === true) {
     r2RocketFire(1);
     r2RocketFire(-1);
   }
 
-  //right leg (-1)
   r2Legs(-1);
-  //left leg (1)
   r2Legs(1);
 
   pop();
@@ -382,7 +385,6 @@ function r2d2(xR2D2, yR2D2, scaleR2D2, rotationR2D2) {
 //asteroid "drawing"
 function asteroid(xAsteroid, yAsteroid, scaleAsteroid, rotationAsteroid) {
   push();
-
   translate(xAsteroid, yAsteroid, scaleAsteroid, rotationAsteroid);
   scale(scaleAsteroid);
   rotate(rotationAsteroid);
@@ -432,8 +434,7 @@ function landingGenerator() {
   xLanding = randomNumber;
 }
 
-//Generates the random x position for the landing spot
-// and the lava on the sides
+//Draw the landing spot and the lava on the sides
 function landing(xLanding) {
   push();
   fill(lavaRed);
@@ -462,7 +463,7 @@ function landing(xLanding) {
   pop();
 }
 
-//start screen
+//start screen (menu)
 function startScreen() {
   push();
 
@@ -536,7 +537,7 @@ function startScreen() {
   pop();
 }
 
-//start screen custom R2 colors
+//start screen custom R2 colors (Menu)
 function startScreenE() {
   push();
 
@@ -590,7 +591,7 @@ function startScreenE() {
   pop();
 }
 
-//start screen How to play
+//start screen How to play (Menu)
 function startScreenH() {
   push();
 
