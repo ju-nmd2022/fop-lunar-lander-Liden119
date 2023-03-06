@@ -755,6 +755,7 @@ function draw() {
 
     asteroidActive1 = false;
     asteroidActive2 = false;
+    asteroidActive3 = false;
 
     //To change state / screen of the game
     if (keyIsDown(83)) {
